@@ -1,7 +1,20 @@
 """Validator tests — semantic checks and error code emission."""
 
 import pytest
-from tests.conftest import error_codes, warning_codes, parse_and_validate
+from lacelang_validator.parser import parse
+from lacelang_validator.validator import validate
+
+
+def _validate(source, **kwargs):
+    return validate(parse(source), **kwargs)
+
+
+def error_codes(source, **kwargs):
+    return [d.code for d in _validate(source, **kwargs).errors]
+
+
+def warning_codes(source, **kwargs):
+    return [d.code for d in _validate(source, **kwargs).warnings]
 
 
 # ── Structural rules ────────────────────────────────────────────
