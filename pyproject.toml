@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lacelang-validator"
+version = "0.1.0"
+description = "Reference Python validator for the Lace probe scripting language (parser + semantic checks, no runtime)."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [{ name = "lacelang contributors" }]
+keywords = ["lace", "lacelang", "validator", "parser", "probe"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Interpreters",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "mypy>=1.5",
+    "ruff>=0.1",
+]
+
+[project.scripts]
+lacelang-validate = "lacelang_validator.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/lacelang/lacelang-python-validator"
+Specification = "https://github.com/lacelang/lacelang"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
