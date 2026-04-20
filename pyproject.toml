@@ -34,8 +34,9 @@ dev = [
 lacelang-validate = "lacelang_validator.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/lacelang/lacelang-python-validator"
-Specification = "https://github.com/lacelang/lacelang"
+Homepage = "https://github.com/tracedown/lacelang-python-validator"
+Executor = "https://github.com/tracedown/lacelang-python-executor"
+Specification = "https://github.com/tracedown/lacelang"
 
 [tool.setuptools.packages.find]
 where = ["src"]

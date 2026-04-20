@@ -10,7 +10,7 @@ against this implementation before each spec release.
 This package **only** parses and validates `.lace` source text. It has no
 HTTP client and does not execute probes. The runtime and its network
 surface live in the separate
-[`lacelang-executor`](../lacelang-python-executor) package, per
+[`lacelang-executor`](https://github.com/tracedown/lacelang-python-executor) package, per
 `lace-spec.md` §16.
 
 ## Why split
