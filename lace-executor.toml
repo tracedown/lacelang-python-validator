@@ -1,0 +1,13 @@
+[executor]
+name        = "lacelang-validator"
+version     = "0.1.0"
+language    = "python"
+conforms_to = ">=0.9.1"
+
+[adapter]
+parse    = "python3 -m lacelang_validator parse {script}"
+validate = "python3 -m lacelang_validator validate {script} --vars-list {vars_list} --context {context}"
+timeout_seconds = 30
+
+[conformance]
+types = ["parse", "validate"]
