@@ -45,4 +45,4 @@ jobs:
       - name: Build conformance harness
         run: cd ../lacelang/testkit/src && make
       - name: Run conformance suite
-        run: ../lacelang/testkit/src/build/lace-conformance -m lace-executor.toml
+        run: ../lacelang/testkit/src/build/lace-conformance -m lace-executor.toml --vectors ../lacelang/testkit/vectors
