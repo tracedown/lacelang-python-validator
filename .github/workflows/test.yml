@@ -43,7 +43,7 @@ jobs:
       - name: Run conformance suite
         run: ../lacelang/testkit/src/build/lace-conformance -m lace-executor.toml --vectors ../lacelang/testkit/vectors --certs-dir /tmp/lace-certs
 
-  dry-run:
+  build-check:
     needs: conformance
     runs-on: ubuntu-latest
     steps:
@@ -51,14 +51,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install build tools
-        run: pip install build twine
       - name: Build distributions
-        run: python -m build
+        run: pip install build twine && python -m build
       - name: Check distributions
         run: twine check dist/*
-      - name: Publish to TestPyPI
-        run: twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing dist/*
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.TESTPYPI_API_TOKEN }}
