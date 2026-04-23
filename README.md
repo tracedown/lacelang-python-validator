@@ -22,17 +22,14 @@ alone gives a clean audit surface with zero network exposure.
 
 ## Install
 
-Not published to PyPI yet. Install from source:
+```bash
+pip install lacelang-validator
+```
+
+Or from source:
 
 ```bash
 pip install git+https://github.com/tracedown/lacelang-python-validator.git
-```
-
-Or from a local clone:
-
-```bash
-git clone https://github.com/tracedown/lacelang-python-validator.git
-pip install ./lacelang-python-validator
 ```
 
 ## Usage
