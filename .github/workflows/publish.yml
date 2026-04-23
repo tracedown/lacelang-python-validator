@@ -1,65 +1,21 @@
 name: Publish to PyPI
 
 on:
-  workflow_run:
-    workflows: ["Tests"]
-    types: [completed]
   release:
     types: [published]
 
 jobs:
-  build:
-    if: >
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
-      github.event_name == 'release'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install build tools
-        run: pip install build twine
-      - name: Build distributions
-        run: python -m build
-      - name: Check distributions
-        run: twine check dist/*
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-  dry-run:
-    needs: build
-    if: github.event_name == 'workflow_run'
-    runs-on: ubuntu-latest
-    environment: testpypi
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-      - name: Publish to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          password: ${{ secrets.TESTPYPI_API_TOKEN }}
-          skip-existing: true
-
   publish:
-    needs: build
-    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          name: dist
-          path: dist/
+          python-version: "3.12"
+      - name: Build distributions
+        run: pip install build && python -m build
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

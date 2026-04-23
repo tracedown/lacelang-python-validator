@@ -11,22 +11,18 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
       - name: Install validator
         run: pip install -e ".[dev]"
-
       - name: Run tests
         run: pytest tests/ -x -q --tb=short
 
   conformance:
+    needs: test
     if: github.repository == 'tracedown/lacelang-python-validator' && !startsWith(github.event.pull_request.title, 'WIP:')
     runs-on: ubuntu-latest
     steps:
@@ -46,3 +42,25 @@ jobs:
         run: mkdir -p /tmp/lace-certs && sh ../lacelang/testkit/certs/generate-certs.sh /tmp/lace-certs
       - name: Run conformance suite
         run: ../lacelang/testkit/src/build/lace-conformance -m lace-executor.toml --vectors ../lacelang/testkit/vectors --certs-dir /tmp/lace-certs
+
+  dry-run:
+    needs: conformance
+    runs-on: ubuntu-latest
+    environment: testpypi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install build tools
+        run: pip install build twine
+      - name: Build distributions
+        run: python -m build
+      - name: Check distributions
+        run: twine check dist/*
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          password: ${{ secrets.TESTPYPI_API_TOKEN }}
+          skip-existing: true
