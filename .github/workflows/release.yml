@@ -1,11 +1,11 @@
-name: Release
+name: Tag release
 
 on:
   push:
     branches: [main]
 
 jobs:
-  release:
+  tag:
     if: github.repository == 'tracedown/lacelang-python-validator'
     runs-on: ubuntu-latest
     permissions:
@@ -20,22 +20,11 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
 
-      - name: Check if release exists
-        id: check
+      - name: Create tag if it doesn't exist
         run: |
-          if gh release view "${{ steps.version.outputs.tag }}" > /dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
+          if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "Tag ${{ steps.version.outputs.tag }} already exists, skipping"
           else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
+            git tag "${{ steps.version.outputs.tag }}"
+            git push origin "${{ steps.version.outputs.tag }}"
           fi
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Create release
-        if: steps.check.outputs.exists == 'false'
-        run: |
-          gh release create "${{ steps.version.outputs.tag }}" \
-            --title "${{ steps.version.outputs.tag }}" \
-            --generate-notes
-        env:
-          GH_TOKEN: ${{ github.token }}

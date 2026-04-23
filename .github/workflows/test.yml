@@ -59,9 +59,7 @@ jobs:
       - name: Check distributions
         run: twine check dist/*
       - name: Publish to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          password: ${{ secrets.TESTPYPI_API_TOKEN }}
-          trusted-publishing: false
-          skip-existing: true
+        run: twine upload --repository-url https://test.pypi.org/legacy/ --skip-existing dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TESTPYPI_API_TOKEN }}
