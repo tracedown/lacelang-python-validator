@@ -23,7 +23,7 @@ class TestStructuralRules:
     def test_at_least_one_call(self):
         """AT_LEAST_ONE_CALL fires when AST has empty calls (safety net)."""
         from lacelang_validator.validator import validate
-        sink = validate({"version": "0.9.1", "calls": []})
+        sink = validate({"version": "0.9.2", "calls": []})
         assert "AT_LEAST_ONE_CALL" in [e.code for e in sink.errors]
 
     def test_empty_script_parse_error(self):
@@ -35,7 +35,7 @@ class TestStructuralRules:
     def test_empty_chain(self):
         """EMPTY_CHAIN fires when AST call has no chain methods (safety net)."""
         from lacelang_validator.validator import validate
-        ast = {"version": "0.9.1", "calls": [{"method": "get", "url": "$u", "chain": {}}]}
+        ast = {"version": "0.9.2", "calls": [{"method": "get", "url": "$u", "chain": {}}]}
         sink = validate(ast)
         assert "EMPTY_CHAIN" in [e.code for e in sink.errors]
 

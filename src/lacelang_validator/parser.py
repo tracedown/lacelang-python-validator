@@ -32,7 +32,7 @@ def _string_to_expr(s: str) -> dict[str, Any]:
         return {"kind": "scriptVar", "name": m.group(1)}
     return {"kind": "literal", "valueType": "string", "value": s}
 
-AST_VERSION = "0.9.1"
+AST_VERSION = "0.9.2"
 
 SCOPE_NAMES = {
     "status", "body", "headers", "bodySize", "totalDelayMs",

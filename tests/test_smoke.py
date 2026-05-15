@@ -9,7 +9,7 @@ from lacelang_validator.validator import validate
 
 def test_minimal_get_parses():
     ast = strip_ast_metadata(parse('get("$u").expect(status: 200)\n'))
-    assert ast["version"] == "0.9.1"
+    assert ast["version"] == "0.9.2"
     [call] = ast["calls"]
     assert call["method"] == "get"
     assert call["url"] == "$u"

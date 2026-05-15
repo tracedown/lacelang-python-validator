@@ -12,7 +12,7 @@ def _parse(src):
 class TestCallParsing:
     def test_get(self):
         ast = _parse('get("https://example.com")\n    .expect(status: 200)\n')
-        assert ast["version"] == "0.9.1"
+        assert ast["version"] == "0.9.2"
         assert len(ast["calls"]) == 1
         assert ast["calls"][0]["method"] == "get"
         assert ast["calls"][0]["url"] == "https://example.com"
