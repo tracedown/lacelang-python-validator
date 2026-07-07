@@ -3,13 +3,13 @@
 import json
 
 from lacelang_validator.cli import strip_ast_metadata
-from lacelang_validator.parser import parse
+from lacelang_validator.parser import AST_VERSION, parse
 from lacelang_validator.validator import validate
 
 
 def test_minimal_get_parses():
     ast = strip_ast_metadata(parse('get("$u").expect(status: 200)\n'))
-    assert ast["version"] == "0.9.2"
+    assert ast["version"] == AST_VERSION
     [call] = ast["calls"]
     assert call["method"] == "get"
     assert call["url"] == "$u"
