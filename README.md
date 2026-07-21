@@ -1,5 +1,7 @@
 # lacelang-validator (python)
 
+[![PyPI](https://img.shields.io/pypi/v/lacelang-validator)](https://pypi.org/project/lacelang-validator/)
+
 Canonical Python validator for [Lace](https://github.com/tracedown/lacelang) —
 the reference implementation with **100% spec conformance**.
 
