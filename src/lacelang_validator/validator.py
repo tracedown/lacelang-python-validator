@@ -13,6 +13,11 @@ from lacelang_validator.errors import DiagnosticSink
 
 CHAIN_ORDER: tuple[str, ...] = ("expect", "check", "assert", "store", "wait")
 CORE_FUNCS: frozenset[str] = frozenset({"json", "form", "schema"})
+# Functions usable only inside `.assert()` conditions (spec §8, §4.7). Anywhere
+# else they are rejected exactly like any unknown name (UNKNOWN_FUNCTION).
+ASSERT_FUNCS: frozenset[str] = frozenset({"count", "includes"})
+# Exact argument counts for the assert-only functions (spec §8).
+ASSERT_FUNC_ARITY: dict[str, int] = {"count": 1, "includes": 2}
 OP_VALUES: frozenset[str] = frozenset({"lt", "lte", "eq", "neq", "gte", "gt"})
 TIMEOUT_ACTIONS: frozenset[str] = frozenset({"fail", "warn", "retry"})
 
@@ -355,9 +360,13 @@ def _walk_expr(
         args = expr.get("args", [])
         if name in CORE_FUNCS:
             _check_core_func_args(name, args, sink, ctx, vars_set)
+        elif name in ASSERT_FUNCS and ctx.chain_method == "assert":
+            _check_assert_func_args(name, args, sink, ctx)
         elif ctx.allow_extension_funcs:
             pass  # extension contexts (call config.extensions, options) accept anything
         else:
+            # count/includes outside an assert condition land here too — they are
+            # unknown everywhere except `.assert()`.
             sink.error("UNKNOWN_FUNCTION", call_index=ctx.call_index, chain_method=ctx.chain_method, field=name)
         for a in args:
             _walk_any(a, sink, vars_set, ctx, prev_available)
@@ -402,3 +411,16 @@ def _check_core_func_args(
         elif vars_set and args[0].get("name") not in vars_set:
             sink.error("SCHEMA_VAR_UNKNOWN", call_index=ctx.call_index,
                        chain_method=ctx.chain_method, field=args[0].get("name"))
+
+
+def _check_assert_func_args(
+    name: str,
+    args: list[Any],
+    sink: DiagnosticSink,
+    ctx: _ExprCtx,
+) -> None:
+    # Arity only — arguments are arbitrary expressions (spec §8): count(x),
+    # includes(search, x). A wrong count is a FUNC_ARG_TYPE error.
+    if len(args) != ASSERT_FUNC_ARITY[name]:
+        sink.error("FUNC_ARG_TYPE", call_index=ctx.call_index,
+                   chain_method=ctx.chain_method, field=name)
