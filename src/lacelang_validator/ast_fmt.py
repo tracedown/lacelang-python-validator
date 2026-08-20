@@ -10,6 +10,7 @@ always parenthesising binary sub-expressions that could be ambiguous.
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 
 _BINARY_PRIORITY = {
@@ -19,6 +20,15 @@ _BINARY_PRIORITY = {
     "+": 5, "-": 5,
     "*": 6, "/": 6, "%": 6,
 }
+
+
+_IDENT_RE = re.compile(r"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
+
+def _fmt_key(key: str) -> str:
+    """Object keys that are not bare identifiers must be quoted, or the
+    printed source does not re-parse (e.g. `404:` / `content-type:`)."""
+    return key if _IDENT_RE.match(key) else json.dumps(key)
 
 
 def fmt(expr: Any) -> str:
@@ -59,7 +69,9 @@ def fmt(expr: Any) -> str:
         args = ", ".join(fmt(a) for a in expr.get("args", []))
         return f"{expr['name']}({args})"
     if k == "objectLit":
-        entries = ", ".join(f"{e['key']}: {fmt(e['value'])}" for e in expr.get("entries", []))
+        entries = ", ".join(
+            f"{_fmt_key(e['key'])}: {fmt(e['value'])}" for e in expr.get("entries", [])
+        )
         return "{" + entries + "}"
     if k == "arrayLit":
         return "[" + ", ".join(fmt(i) for i in expr.get("items", [])) + "]"
