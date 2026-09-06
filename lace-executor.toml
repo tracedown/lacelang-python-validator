@@ -1,6 +1,6 @@
 [executor]
 name        = "lacelang-validator"
-version     = "0.1.4"
+version     = "0.2.0"
 language    = "python"
 conforms_to = ">=0.9.4"
 
