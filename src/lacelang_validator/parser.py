@@ -10,7 +10,7 @@ Grammar reference: `lacelang.g4`.
 import re
 from typing import Any
 
-from lacelang_validator.lexer import Token, tokenize
+from lacelang_validator.lexer import LexError, Token, tokenize
 
 # A string literal whose content is *exactly* one of:
 #   $$ident        → run_var
@@ -714,6 +714,9 @@ class Parser:
 
 
 def parse(source: str) -> dict[str, Any]:
-    """Tokenize and parse. Raises ParseError on syntax issues."""
-    tokens = tokenize(source)
+    """Tokenize and parse. Raises ParseError on syntax issues (lexer errors included)."""
+    try:
+        tokens = tokenize(source)
+    except LexError as e:
+        raise ParseError(e.message, e.line) from e
     return Parser(tokens).parse_script()
