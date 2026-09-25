@@ -1,8 +1,8 @@
 [executor]
 name        = "lacelang-validator"
-version     = "0.2.0"
+version     = "0.2.1"
 language    = "python"
-conforms_to = ">=0.9.4"
+conforms_to = ">=0.9.7"
 
 [adapter]
 parse    = "python3 -m lacelang_validator parse {script}"
